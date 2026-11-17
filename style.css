@@ -471,3 +471,11 @@ img.shot {
   font-size: 0.76rem;
   line-height: 1.45;
 }
+
+.next.grid-cols-4 .panel p.small {
+  font-size: 0.72rem;
+}
+
+.next.grid-cols-4 .panel .head {
+  font-size: 0.86rem;
+}

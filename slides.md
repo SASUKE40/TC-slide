@@ -93,12 +93,12 @@ The research agenda [4] calls for <b>detecting</b> TC in existing code, using an
       <span class="badge">abstraction</span><span class="badge">api-stability</span><span class="badge">automation</span><span class="badge">compliance-readiness</span>
       <span class="badge">configurability</span><span class="badge">modularity</span><span class="badge">observability</span><span class="badge">reusability</span>
     </div>
-    <p class="small c-text2 mt-1">8 categories, one heuristic prompt each. TC-ADR uses 9 (adds <code>knowledge-preservation</code>).</p>
+    <p class="small c-text2 mt-1"><b>8 categories today</b>, one prompt each. <code>knowledge-preservation</code> (ADRs, rationale) is planned, to match the 9 in the APSEC draft [6] and TC-ADR [5].</p>
   </div>
   <div class="panel purple">
     <div class="head c-purple"><tabler-file-description class="icon" /> TC-ADR Manager [5]</div>
     <p class="small">Extends <code>vscode-adr-manager</code>: MADR records gain <b>Benefit</b>, <b>Conditions</b>, <b>Signals</b>, Confidence, Status and Related Decisions. ADRs are the second-highest-rated TC scenario (4.13 / 5) [3].</p>
-    <p class="small mt-2 c-text2">We share Benefit and Conditions. Our <code>signals</code> are code evidence, theirs are signs of realisation. ADR linking is <b>read-only</b> today: we match an existing ADR, but never create one or link back.</p>
+    <p class="small mt-2 c-text2">We share Benefit and Conditions. Our <code>signals</code> are code evidence, theirs are signs of realisation. ADR linking is <b>read-only</b> today: we match an existing ADR, but never create one or link back. ADR creation, which the APSEC draft describes, is planned [6].</p>
   </div>
 </div>
 
@@ -111,14 +111,14 @@ The research agenda [4] calls for <b>detecting</b> TC in existing code, using an
 ```mermaid
 flowchart LR
   A["Right-click<br/>Analyse for TC"] --> B["tree-sitter<br/>class + imports + metrics"]
-  B --> C["8 parallel Claude calls<br/>one per category"]
+  B --> C["8 parallel Claude calls<br/>one per category (9th planned)"]
   C --> D["JSON verdicts<br/>is_tc_candidate, benefit, …"]
   D --> E["Preview annotation<br/>Accept / Dismiss"]
 ```
 
 <div class="grid grid-cols-3 gap-4 mt-6">
   <div class="panel dim"><div class="head"><tabler-cpu class="icon c-blue" /> Model</div><p class="small"><code>claude-sonnet-4-6</code>, temperature 0 by default</p></div>
-  <div class="panel dim"><div class="head"><tabler-link class="icon c-purple" /> ADR linking</div><p class="small">Read-only: Markdown ADRs under <code>docs/</code> are matched and cited as <code>adr = "ADR-0001"</code>. Planned: create a TC-ADR from an annotation and link back.</p></div>
+  <div class="panel dim"><div class="head"><tabler-link class="icon c-purple" /> ADR linking</div><p class="small">Read-only: Markdown ADRs under <code>docs/</code> are matched and cited as <code>adr = "ADR-0001"</code>. Planned: create a TC-ADR from an annotation, with a two-way link [6].</p></div>
   <div class="panel dim"><div class="head"><tabler-file-code class="icon c-green" /> Output</div><p class="small">Accepted annotations generate a <code>TechnicalCredit.java</code> annotation type</p></div>
 </div>
 
@@ -321,22 +321,24 @@ minutes: 6 min
 
 # Headline numbers
 
-<div class="grid grid-cols-4 gap-3 mt-3">
-  <div class="stat green"><div class="num">2.1%</div><div class="lbl">flip rate<br/><span class="c-muted">1 of 48 pairs · target &lt; 5%</span></div></div>
+<p class="small c-text2">Against the APSEC draft's research questions [6]: <b>RQ3</b> (consistency) gets a direct answer, <b>RQ2</b> (accuracy) its first quantitative evidence.</p>
+
+<div class="grid grid-cols-4 gap-3 mt-2">
+  <div class="stat green"><div class="num">2.1%</div><div class="lbl">flip rate · RQ3<br/><span class="c-muted">1 of 48 pairs · target &lt; 5%</span></div></div>
   <div class="stat orange"><div class="num">4 / 6</div><div class="lbl">items classified right<br/><span class="c-muted">pattern oracle also 4 / 6</span></div></div>
-  <div class="stat blue"><div class="num">7.6 / 9.1 s</div><div class="lbl">latency p50 / p95<br/><span class="c-muted">target p95 &lt; 10 s</span></div></div>
+  <div class="stat blue"><div class="num" style="font-size: 1.55rem; white-space: nowrap">7.6 / 9.1 s</div><div class="lbl">latency p50 / p95<br/><span class="c-muted">target p95 &lt; 10 s</span></div></div>
   <div class="stat purple"><div class="num">$0.055</div><div class="lbl">per analysis (8 calls)<br/><span class="c-muted">$1.66 for the whole run</span></div></div>
 </div>
 
-<div class="grid grid-cols-2 gap-5 mt-6">
+<div class="grid grid-cols-2 gap-5 mt-4">
   <div class="panel dim">
-    <div class="head small c-text2">Pooled pair-level F1</div>
+    <div class="head small c-text2">Pooled pair-level F1 · RQ2</div>
     <Bar label="Detector" :value="26.7" color="var(--orange)" />
     <Bar label="Always yes" :value="19.6" color="var(--muted)" />
     <p class="small c-green mt-1">Beats always-yes</p>
   </div>
   <div class="panel dim">
-    <div class="head small c-text2">Pooled pair-level accuracy</div>
+    <div class="head small c-text2">Pooled pair-level accuracy · RQ2</div>
     <Bar label="Detector" :value="76.1" color="var(--orange)" />
     <Bar label="Always no" :value="89.1" color="var(--muted)" />
     <p class="small c-red mt-1">Loses to always-no, so H4 fails</p>
@@ -356,9 +358,9 @@ minutes: 6 min
   <div class="hyp pass"><b>H6</b> p95 &lt; 10 s<span>9.1 s (borderline)</span></div>
 </div>
 
-<div class="insight mt-6">
-  <div class="cue c-orange"><tabler-bulb class="icon" /> Bottom line</div>
-  <div>Stable and cheap, but it doesn't yet tell real credit apart from code that merely <b>looks</b> like a pattern. The two hypotheses that test usefulness fail.</div>
+<div class="grid grid-cols-2 gap-4 mt-5">
+  <div class="panel green"><div class="head small c-green">RQ3 · consistency: answered</div><p class="small">H1: 2.1% flips at temperature 0 (0% in the replication), 240 calls, 0 errors. Stability is largely solved at temperature 0.</p></div>
+  <div class="panel red"><div class="head small c-red">RQ2 · accuracy: first evidence, negative</div><p class="small">H4 and H5 fail: it doesn't beat always-no or a pattern-presence oracle. <b>Validity</b>, not stability, is the open problem.</p></div>
 </div>
 
 <p class="src">Replication run (same code): same scores, except 0% flips and p95 10.1 s, which fails H6 by 0.1 s.</p>
@@ -374,12 +376,13 @@ minutes: 6 min
     <p class="small mt-2 c-text2">It flags <i>potential</i> credit, but can't tell it from YAGNI / over-engineering without context on usage or the roadmap [2].</p>
   </div>
   <div class="panel orange">
-    <div class="head c-orange"><tabler-circle-off class="icon" /> <code>abstraction</code> never fires</div>
-    <p class="small">Its checklist leans on name suffixes and interfaces that aren't in the snippet; only the anchor class is sent.</p>
+    <div class="head c-orange"><tabler-circle-off class="icon" /> OPRO prompts never fire</div>
+    <p class="small"><code>abstraction</code> and <code>observability</code> are the two OPRO-tuned prompts [6]. Both fired in <b>0 of 30</b> calls; abstraction missed all 3 labelled positives.</p>
+    <p class="small mt-2 c-text2">OPRO's reward was self-consistency only, and "always no" is perfectly consistent.</p>
   </div>
   <div class="panel orange">
     <div class="head c-orange"><tabler-flame class="icon" /> <code>api-stability</code> over-fires</div>
-    <p class="small">Fires on 5 of 6 items, all false positives. A loose bullet list with no decision rule.</p>
+    <p class="small">The <b>untuned</b> prompt: fires on 5 of 6 items, all false positives. A loose bullet list with no decision rule.</p>
   </div>
 </div>
 
@@ -477,36 +480,44 @@ What the numbers can't tell us yet, and what we do next
   <div class="panel dim"><div class="head"><tabler-flask class="icon c-red" /> Exploratory re-scoring</div><p class="small">The 67% F1 by reported category was chosen after seeing the data.</p></div>
 </div>
 
-<div class="key mt-5">Also: temperature 0 only, synthetic code, and the taxonomy may change upstream (PR #145), where GoF patterns are mechanisms, not credit.</div>
+<div class="key mt-5">Also: temperature 0 only, synthetic code, and the taxonomy may change upstream (PR #145), where GoF patterns are mechanisms, not credit; the APSEC draft describes 9 benefit categories, the code has 8.</div>
 
 ---
 
 # Sprint 2 next steps
 
-<div class="grid grid-cols-3 gap-3 mt-2 next">
+<div class="grid grid-cols-4 gap-3 mt-2 next">
   <div class="panel orange">
-    <div class="head c-orange"><tabler-coin class="icon" /> 1 · Payoff / YAGNI test</div>
-    <p class="small">Every heuristic names the change the construct makes cheaper and looks for evidence it is anticipated. A third outcome: "structure present, credit unrealised" [2]. Proposed through OPRO.</p>
+    <div class="head c-orange"><tabler-target class="icon" /> 1 · Fix OPRO</div>
+    <p class="small">Reward agreement with labels (pair F1 on a held-out split); keep self-consistency as a constraint only.</p>
+  </div>
+  <div class="panel orange">
+    <div class="head c-orange"><tabler-coin class="icon" /> 2 · Payoff test</div>
+    <p class="small">Each prompt names the change made cheaper and evidence it is anticipated. New outcome: "structure present, credit unrealised" [2].</p>
   </div>
   <div class="panel green">
-    <div class="head c-green"><tabler-arrows-split class="icon" /> 2 · Category decision</div>
-    <p class="small">Keep the model's reported category, or ask once for all (1 call, not 8). Same checklist and decision rule for every prompt; no name-based evidence.</p>
+    <div class="head c-green"><tabler-arrows-split class="icon" /> 3 · Categories</div>
+    <p class="small">Keep the model's reported category, or ask once for all. Ship the 9th, <code>knowledge-preservation</code> [5, 6].</p>
   </div>
   <div class="panel purple">
-    <div class="head c-purple"><tabler-file-description class="icon" /> 3 · Align with TC-ADR</div>
-    <p class="small">Add <code>confidence</code> and <code>status</code> (default <code>anticipated</code>), keep the rationale, split code <code>evidence</code> from realisation <code>signals</code> [5].</p>
+    <div class="head c-purple"><tabler-file-description class="icon" /> 4 · TC-ADR schema</div>
+    <p class="small">Add <code>confidence</code> and <code>status</code> (<code>anticipated</code>), keep the rationale, split <code>evidence</code> from realisation <code>signals</code> [5].</p>
   </div>
   <div class="panel blue">
-    <div class="head c-blue"><tabler-git-branch class="icon" /> 4 · Real-code items</div>
-    <p class="small">OSS Java repos, labelled from history: credit when later commits used it (a second implementation, a vendor swap). Removes construction bias.</p>
+    <div class="head c-blue"><tabler-users-group class="icon" /> 5 · Expert benchmark</div>
+    <p class="small">Grow the pilot into the paper's benchmark [6]: 2nd and 3rd blind labellers, plus OSS items labelled from history (credit = later commits used it).</p>
+  </div>
+  <div class="panel blue">
+    <div class="head c-blue"><tabler-file-plus class="icon" /> 6 · ADR creation</div>
+    <p class="small">"Create TC-ADR from annotation", pre-filled <code>tc-*</code> fields, and a link back to the code [5, 6].</p>
   </div>
   <div class="panel dim">
-    <div class="head"><tabler-git-pull-request class="icon c-orange" /> 5 · Rerun on GoF (#145)</div>
-    <p class="small">Rerun on <a href="https://github.com/cielbellerose/TechnicalCredit/pull/145">upstream #145</a>. Caveat: patterns are mechanisms, not credit, so keep the benefit category alongside them.</p>
+    <div class="head"><tabler-git-pull-request class="icon c-orange" /> 7 · GoF rerun</div>
+    <p class="small">Rerun on <a href="https://github.com/cielbellerose/TechnicalCredit/pull/145">#145</a>. Caveat: patterns are mechanisms, not credit; the paper describes 9 benefit categories.</p>
   </div>
   <div class="panel dim">
-    <div class="head"><tabler-user-check class="icon c-blue" /> 6 · Labeller + temperature 1</div>
-    <p class="small">A blind second labeller (needs a human); pre-register reported-category scoring. Optional <code>TC_TEMPERATURE=1</code> run, about $1.70.</p>
+    <div class="head"><tabler-temperature class="icon c-purple" /> 8 · Temperature 1</div>
+    <p class="small">Optional <code>TC_TEMPERATURE=1</code> run, about $1.70; pre-register reported-category scoring.</p>
   </div>
 </div>
 
@@ -523,6 +534,7 @@ What the numbers can't tell us yet, and what we do next
 3. A. Bucaioni, I. Gorton, P. Pelliccione. **Technical Credit: Industry Views on Benefits and Barriers.** ICSE 2026 SEIP, Distinguished Paper Award. [conf.researchr.org](https://conf.researchr.org/details/icse-2026/icse-2026-software-engineering-in-practice/12/Technical-Credit-Industry-Views-on-Benefits-and-Barriers)
 4. I. Gorton, A. Bucaioni, P. Pelliccione. **A Research Agenda for Technical Credit: Giving Software Quality a Language.** Medium, May 2026. [medium.com/@i.gorton](https://medium.com/@i.gorton/a-research-agenda-for-technical-credit-giving-software-quality-a-language-e9ad62a0cbf9)
 5. I. Gorton. **A VSCode Plugin for Capturing Technical Credit in Architecture Decision Records** (TC-ADR Manager). LinkedIn, Jul 2026. [linkedin.com/pulse](https://www.linkedin.com/pulse/vscode-plugin-capturing-technical-credit-architecture-ian-gorton-ltapf/)
+6. **Towards Automatic Identification of Technical Credit.** APSEC 2026 draft (unpublished; describes this extension).
 
 </div>
 
