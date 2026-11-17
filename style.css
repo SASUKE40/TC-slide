@@ -444,3 +444,17 @@ img.shot {
   border: 1.25px solid var(--divider);
   border-radius: 8px;
 }
+
+.refs ol {
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.refs li {
+  margin-bottom: 0.45rem;
+}
+
+.refs a {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+}

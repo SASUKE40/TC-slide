@@ -55,29 +55,54 @@ What Technical Credit is, and what the detector does
 
 ---
 
-# Technical Credit: the opposite of technical debt
+# What is Technical Credit?
 
-Design decisions that cost a little now and **pay off later**, documented where the code lives.
+<div class="key mt-1">"The <b>measurable benefit</b> arising from design or infrastructure decisions which, through deliberate investment or balanced trade-offs, create <b>enduring advantages for system evolution</b>."<span class="src">Working definition: technical.credit [1]; Bucaioni, Gorton, Pelliccione, ICSE 2026 SEIP [3]</span></div>
 
-<div class="grid grid-cols-2 gap-5 mt-5">
-  <div class="panel blue">
-    <div class="head c-blue"><tabler-bulb class="icon" /> The idea</div>
-    <p class="small">Teams record debt, but rarely record the deliberate investments: an interface that lets new vendors plug in, a config point that avoids a redeploy.</p>
-    <p class="small mt-2">The detector proposes an <code>@TechnicalCredit</code> annotation with the <b>benefit</b>, the <b>conditions</b> under which it materialises, and the <b>signals</b> seen in the code.</p>
+<div class="grid grid-cols-3 gap-4 mt-5">
+  <div class="panel red">
+    <div class="head c-red"><tabler-trending-down class="icon" /> Debt names the drag</div>
+    <p class="small">Technical debt: future cost and friction from expedient choices. It has metaphors, tools and metrics.</p>
+  </div>
+  <div class="panel green">
+    <div class="head c-green"><tabler-trending-up class="icon" /> Credit names the capacity</div>
+    <p class="small">Its positive counterpart: decisions that cost more up front and <b>reduce</b> future friction, e.g. an edge service wrapping an email vendor [2].</p>
   </div>
   <div class="panel orange">
-    <div class="head c-orange"><tabler-category class="icon" /> 8 TC categories</div>
-    <div class="mt-2">
-      <span class="badge">abstraction</span><span class="badge">api-stability</span>
-      <span class="badge">automation</span><span class="badge">compliance-readiness</span>
-      <span class="badge">configurability</span><span class="badge">modularity</span>
-      <span class="badge">observability</span><span class="badge">reusability</span>
-    </div>
-    <p class="small mt-3 c-text2">Each category has its own heuristic prompt.</p>
+    <div class="head c-orange"><tabler-coin class="icon" /> Only real once cashed in</div>
+    <p class="small">Credit pays off when the anticipated change happens. If the vendor never changes, it was over-engineering (YAGNI) [2].</p>
   </div>
 </div>
 
-<div class="key mt-5"><b>Sprint 1 goal:</b> make the existing VS Code extension safe to use, then <b>measure</b> how accurate, stable, fast and cheap it is. No prompt changes this sprint.</div>
+<div class="insight mt-5">
+  <div class="cue c-blue"><tabler-users class="icon" /> Industry view</div>
+  <div class="small">31 practitioners + 6 interviews: three quarters agreed with the definition, but <b>74%</b> cite unclear ROI and over half the lack of agreed metrics as barriers [3, 4].</div>
+</div>
+
+---
+
+# Where the TC Detector fits
+
+The research agenda [4] calls for <b>detecting</b> TC in existing code, using an LLM to find candidate <b>design dividends</b>: observable signs of TC, as code smells are signs of debt.
+
+<div class="grid grid-cols-2 gap-5 mt-4">
+  <div class="panel blue">
+    <div class="head c-blue"><tabler-code class="icon" /> TC Detector (this project)</div>
+    <p class="small">A VS Code extension: analyse a Java class, propose an <code>@TechnicalCredit</code> annotation with <b>benefit</b>, <b>conditions</b> and <b>signals</b>, linked to a matching ADR.</p>
+    <div class="mt-2">
+      <span class="badge">abstraction</span><span class="badge">api-stability</span><span class="badge">automation</span><span class="badge">compliance-readiness</span>
+      <span class="badge">configurability</span><span class="badge">modularity</span><span class="badge">observability</span><span class="badge">reusability</span>
+    </div>
+    <p class="small c-text2 mt-1">8 categories, one heuristic prompt each</p>
+  </div>
+  <div class="panel purple">
+    <div class="head c-purple"><tabler-file-description class="icon" /> TC-ADR Manager [5]</div>
+    <p class="small">Extends <code>vscode-adr-manager</code>: MADR records gain <b>Benefit</b>, <b>Conditions</b>, <b>Signals</b>, Confidence, Status and Related Decisions.</p>
+    <p class="small mt-2 c-text2">Our annotation uses the same benefit / conditions / signals fields, so code-level and ADR-level credit line up.</p>
+  </div>
+</div>
+
+<div class="key mt-4"><b>Sprint 1 goal:</b> make the extension safe to use, then <b>measure</b> how accurate, stable, fast and cheap it is, and whether it detects credit that <i>pays off</i> or only pattern shape. No prompt changes this sprint.</div>
 
 ---
 
@@ -476,6 +501,22 @@ What the numbers can't tell us yet, and what we do next
 </div>
 
 <p class="src">Pilot spend so far: $3.40 of an $11 budget (smoke test + two full runs).</p>
+
+---
+
+# References
+
+<div class="refs mt-2">
+
+1. **Technical Credit: Concept & Evidence.** technical.credit. [technical.credit/concept.html](https://technical.credit/concept.html)
+2. I. Gorton, A. Bucaioni, P. Pelliccione. **Technical Credit.** *Communications of the ACM* 68(2), 2025. [cacm.acm.org/opinion/technical-credit](https://cacm.acm.org/opinion/technical-credit/)
+3. A. Bucaioni, I. Gorton, P. Pelliccione. **Technical Credit: Industry Views on Benefits and Barriers.** ICSE 2026 SEIP, Distinguished Paper Award. [conf.researchr.org](https://conf.researchr.org/details/icse-2026/icse-2026-software-engineering-in-practice/12/Technical-Credit-Industry-Views-on-Benefits-and-Barriers)
+4. I. Gorton, A. Bucaioni, P. Pelliccione. **A Research Agenda for Technical Credit: Giving Software Quality a Language.** Medium, May 2026. [medium.com/@i.gorton](https://medium.com/@i.gorton/a-research-agenda-for-technical-credit-giving-software-quality-a-language-e9ad62a0cbf9)
+5. I. Gorton. **A VSCode Plugin for Capturing Technical Credit in Architecture Decision Records** (TC-ADR Manager). LinkedIn, Jul 2026. [linkedin.com/pulse](https://www.linkedin.com/pulse/vscode-plugin-capturing-technical-credit-architecture-ian-gorton-ltapf/)
+
+</div>
+
+<p class="src mt-4">Project data: SASUKE40/technicalcredit, study/README.md (pre-registration) and study/sprint-1-results.md (results).</p>
 
 ---
 layout: center
