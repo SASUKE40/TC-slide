@@ -62,14 +62,14 @@ What Technical Credit is, and what the detector does
 <div class="grid grid-cols-3 gap-4 mt-5">
   <div class="panel red">
     <div class="head c-red"><tabler-trending-down class="icon" /> Debt names the drag</div>
-    <p class="small">Technical debt: future cost and friction from expedient choices. It has metaphors, tools and metrics.</p>
+    <p class="small">Future cost and friction from expedient choices. Credit is its <b>complement</b>, not its opposite: one design can be both credit and debt at once [3].</p>
   </div>
   <div class="panel green">
     <div class="head c-green"><tabler-trending-up class="icon" /> Credit names the capacity</div>
-    <p class="small">Its positive counterpart: decisions that cost more up front and <b>reduce</b> future friction, e.g. an edge service wrapping an email vendor [2].</p>
+    <p class="small">Deliberate investment <b>or a balanced trade-off</b>; extra upfront cost is not required [3]. E.g. an edge service wrapping an email vendor [2].</p>
   </div>
   <div class="panel orange">
-    <div class="head c-orange"><tabler-coin class="icon" /> Only real once cashed in</div>
+    <div class="head c-orange"><tabler-coin class="icon" /> Realised upon use</div>
     <p class="small">Credit pays off when the anticipated change happens. If the vendor never changes, it was over-engineering (YAGNI) [2].</p>
   </div>
 </div>
@@ -93,12 +93,12 @@ The research agenda [4] calls for <b>detecting</b> TC in existing code, using an
       <span class="badge">abstraction</span><span class="badge">api-stability</span><span class="badge">automation</span><span class="badge">compliance-readiness</span>
       <span class="badge">configurability</span><span class="badge">modularity</span><span class="badge">observability</span><span class="badge">reusability</span>
     </div>
-    <p class="small c-text2 mt-1">8 categories, one heuristic prompt each</p>
+    <p class="small c-text2 mt-1">8 categories, one heuristic prompt each. TC-ADR uses 9 (adds <code>knowledge-preservation</code>).</p>
   </div>
   <div class="panel purple">
     <div class="head c-purple"><tabler-file-description class="icon" /> TC-ADR Manager [5]</div>
-    <p class="small">Extends <code>vscode-adr-manager</code>: MADR records gain <b>Benefit</b>, <b>Conditions</b>, <b>Signals</b>, Confidence, Status and Related Decisions.</p>
-    <p class="small mt-2 c-text2">Our annotation uses the same benefit / conditions / signals fields, so code-level and ADR-level credit line up.</p>
+    <p class="small">Extends <code>vscode-adr-manager</code>: MADR records gain <b>Benefit</b>, <b>Conditions</b>, <b>Signals</b>, Confidence, Status and Related Decisions. ADRs are the second-highest-rated TC scenario (4.13 / 5) [3].</p>
+    <p class="small mt-2 c-text2">We share Benefit and Conditions. Our <code>signals</code> are code evidence, theirs are signs of realisation. ADR linking is <b>read-only</b> today: we match an existing ADR, but never create one or link back.</p>
   </div>
 </div>
 
@@ -118,7 +118,7 @@ flowchart LR
 
 <div class="grid grid-cols-3 gap-4 mt-6">
   <div class="panel dim"><div class="head"><tabler-cpu class="icon c-blue" /> Model</div><p class="small"><code>claude-sonnet-4-6</code>, temperature 0 by default</p></div>
-  <div class="panel dim"><div class="head"><tabler-link class="icon c-purple" /> ADR linking</div><p class="small">Markdown ADRs under <code>docs/</code> are matched and linked as <code>adr = "ADR-0001"</code></p></div>
+  <div class="panel dim"><div class="head"><tabler-link class="icon c-purple" /> ADR linking</div><p class="small">Read-only: Markdown ADRs under <code>docs/</code> are matched and cited as <code>adr = "ADR-0001"</code>. Planned: create a TC-ADR from an annotation and link back.</p></div>
   <div class="panel dim"><div class="head"><tabler-file-code class="icon c-green" /> Output</div><p class="small">Accepted annotations generate a <code>TechnicalCredit.java</code> annotation type</p></div>
 </div>
 
@@ -365,13 +365,13 @@ minutes: 6 min
 
 ---
 
-# Why: look-alikes fool it, and two prompts drive the errors
+# Why: it sees the structure, not the payoff
 
 <div class="grid grid-cols-3 gap-4 mt-3">
   <div class="panel red">
     <div class="head c-red"><tabler-mask class="icon" /> Look-alikes</div>
     <p class="small">The one-implementation strategy and the hard-wired observer are flagged as TC on <b>every</b> repeat. The plain forwarder is correctly ignored.</p>
-    <p class="small mt-2 c-text2">The signal is closer to "uses interfaces" than "this design pays off".</p>
+    <p class="small mt-2 c-text2">It flags <i>potential</i> credit, but can't tell it from YAGNI / over-engineering without context on usage or the roadmap [2].</p>
   </div>
   <div class="panel orange">
     <div class="head c-orange"><tabler-circle-off class="icon" /> <code>abstraction</code> never fires</div>
@@ -383,7 +383,9 @@ minutes: 6 min
   </div>
 </div>
 
-<div class="key mt-5">Exploratory: credit twins draw more firing categories than look-alikes (2.5 vs 1.0 per analysis). A count threshold might separate them; to be tested.</div>
+<div class="key mt-5"><b>The CACM payoff test:</b> "a design decision yields technical credit upon its utilization" [2]. A one-implementation strategy has the structure but no payoff, and nothing in the prompts asks whether the variation point is used. This is the YAGNI case, and why H5 fails.</div>
+
+<p class="src">Exploratory: credit twins draw more firing categories than look-alikes (2.5 vs 1.0 per analysis); a count threshold might separate them.</p>
 
 ---
 
@@ -475,28 +477,36 @@ What the numbers can't tell us yet, and what we do next
   <div class="panel dim"><div class="head"><tabler-flask class="icon c-red" /> Exploratory re-scoring</div><p class="small">The 67% F1 by reported category was chosen after seeing the data.</p></div>
 </div>
 
-<div class="key mt-5">Also: temperature 0 only, synthetic code, and the taxonomy is about to change upstream (PR #145).</div>
+<div class="key mt-5">Also: temperature 0 only, synthetic code, and the taxonomy may change upstream (PR #145), where GoF patterns are mechanisms, not credit.</div>
 
 ---
 
 # Sprint 2 next steps
 
-<div class="grid grid-cols-2 gap-4 mt-3">
-  <div class="panel blue">
-    <div class="head c-blue"><tabler-user-check class="icon" /> 1 · Second labeller</div>
-    <p class="small">An independent person labels the 6 items blind; report agreement (Cohen's κ) on <code>tc</code> and per category. Needs a human.</p>
-  </div>
+<div class="grid grid-cols-3 gap-3 mt-2 next">
   <div class="panel orange">
-    <div class="head c-orange"><tabler-git-pull-request class="icon" /> 2 · Rerun on GoF categories</div>
-    <p class="small">Re-run the pilot on upstream <a href="https://github.com/cielbellerose/TechnicalCredit/pull/145">cielbellerose/TechnicalCredit#145</a> ("category → design pattern" output). The harness supports it unchanged at item level.</p>
+    <div class="head c-orange"><tabler-coin class="icon" /> 1 · Payoff / YAGNI test</div>
+    <p class="small">Every heuristic names the change the construct makes cheaper and looks for evidence it is anticipated. A third outcome: "structure present, credit unrealised" [2]. Proposed through OPRO.</p>
   </div>
   <div class="panel green">
-    <div class="head c-green"><tabler-arrows-split class="icon" /> 3 · Category decision</div>
-    <p class="small">Keep the model's reported category, or ask once for all categories (1 call instead of 8). Same checklist + decision rule for every prompt, no name-based evidence, a "does it pay off?" test.</p>
+    <div class="head c-green"><tabler-arrows-split class="icon" /> 2 · Category decision</div>
+    <p class="small">Keep the model's reported category, or ask once for all (1 call, not 8). Same checklist and decision rule for every prompt; no name-based evidence.</p>
   </div>
   <div class="panel purple">
-    <div class="head c-purple"><tabler-temperature class="icon" /> 4 · Temperature 1 run</div>
-    <p class="small"><code>TC_TEMPERATURE=1 npm run pilot -- run</code>, about $1.70, to see how much stability depends on temperature 0. Log per-call reasoning first.</p>
+    <div class="head c-purple"><tabler-file-description class="icon" /> 3 · Align with TC-ADR</div>
+    <p class="small">Add <code>confidence</code> and <code>status</code> (default <code>anticipated</code>), keep the rationale, split code <code>evidence</code> from realisation <code>signals</code> [5].</p>
+  </div>
+  <div class="panel blue">
+    <div class="head c-blue"><tabler-git-branch class="icon" /> 4 · Real-code items</div>
+    <p class="small">OSS Java repos, labelled from history: credit when later commits used it (a second implementation, a vendor swap). Removes construction bias.</p>
+  </div>
+  <div class="panel dim">
+    <div class="head"><tabler-git-pull-request class="icon c-orange" /> 5 · Rerun on GoF (#145)</div>
+    <p class="small">Rerun on <a href="https://github.com/cielbellerose/TechnicalCredit/pull/145">upstream #145</a>. Caveat: patterns are mechanisms, not credit, so keep the benefit category alongside them.</p>
+  </div>
+  <div class="panel dim">
+    <div class="head"><tabler-user-check class="icon c-blue" /> 6 · Labeller + temperature 1</div>
+    <p class="small">A blind second labeller (needs a human); pre-register reported-category scoring. Optional <code>TC_TEMPERATURE=1</code> run, about $1.70.</p>
   </div>
 </div>
 
