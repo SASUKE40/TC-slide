@@ -55,50 +55,46 @@ What Technical Credit is, and what the detector does
 
 ---
 
-# What is Technical Credit?
+# Recap: technical debt vs. technical credit
 
-<div class="key mt-1">"The <b>measurable benefit</b> arising from design or infrastructure decisions which, through deliberate investment or balanced trade-offs, create <b>enduring advantages for system evolution</b>."<span class="src">Working definition: technical.credit [1]; Bucaioni, Gorton, Pelliccione, ICSE 2026 SEIP [3]</span></div>
-
-<div class="grid grid-cols-3 gap-4 mt-5">
+<div class="grid grid-cols-2 gap-5 mt-4">
   <div class="panel red">
-    <div class="head c-red"><tabler-trending-down class="icon" /> Debt names the drag</div>
-    <p class="small">Future cost and friction from expedient choices. Credit is its <b>complement</b>, not its opposite: one design can be both credit and debt at once [3].</p>
+    <div class="head c-red"><tabler-trending-down class="icon" /> Technical debt: the drag</div>
+    <p class="small">Future cost and friction from expedient choices. Spotted through <b>code smells</b>.</p>
   </div>
   <div class="panel green">
-    <div class="head c-green"><tabler-trending-up class="icon" /> Credit names the capacity</div>
-    <p class="small">Deliberate investment <b>or a balanced trade-off</b>; extra upfront cost is not required [3]. E.g. an edge service wrapping an email vendor [2].</p>
-  </div>
-  <div class="panel orange">
-    <div class="head c-orange"><tabler-coin class="icon" /> Realised upon use</div>
-    <p class="small">Credit pays off when the anticipated change happens. If the vendor never changes, it was over-engineering (YAGNI) [2].</p>
+    <div class="head c-green"><tabler-trending-up class="icon" /> Technical credit: the capacity</div>
+    <p class="small">The <b>measurable benefit</b> of design decisions that make future change cheaper [1, 3]. Spotted through <b>design dividends</b>.</p>
   </div>
 </div>
 
-<div class="insight mt-5">
-  <div class="cue c-blue"><tabler-users class="icon" /> Industry view</div>
-  <div class="small">31 practitioners + 6 interviews: three quarters agreed with the definition, but <b>74%</b> cite unclear ROI and over half the lack of agreed metrics as barriers [3, 4].</div>
-</div>
+<div class="key mt-5"><b>Credit pays off only when used</b> [2]: wrapping an email vendor is credit if the vendor ever changes; if it never does, it was over-engineering (YAGNI). Credit is debt's <b>complement</b>, not its opposite: one design can be both [3].</div>
 
 ---
 
 # Where the TC Detector fits
 
-The research agenda [4] calls for <b>detecting</b> TC in existing code, using an LLM to find candidate <b>design dividends</b>: observable signs of TC, as code smells are signs of debt.
+The research agenda &#91;4&#93; calls for <b>detecting</b> TC in existing code. The TC Detector uses an LLM to find candidate <b>design dividends</b> in a Java class.
 
-<div class="grid grid-cols-2 gap-5 mt-4">
-  <div class="panel blue">
-    <div class="head c-blue"><tabler-code class="icon" /> TC Detector (this project)</div>
-    <p class="small">A VS Code extension: analyse a Java class, propose an <code>@TechnicalCredit</code> annotation with <b>benefit</b>, <b>conditions</b> and <b>signals</b>, linked to a matching ADR.</p>
-    <div class="mt-2">
+<div class="grid grid-cols-3 gap-5 mt-4">
+  <div class="panel blue col-span-2">
+    <div class="head c-blue"><tabler-code class="icon" /> TC Detector: a VS Code extension (this project)</div>
+    <p class="small">Right-click a Java class and it proposes an <code>@TechnicalCredit</code> annotation you can accept or dismiss:</p>
+    <ul class="small" style="margin: 0.3rem 0 0.4rem">
+      <li><b>benefit</b>: what future change the design makes cheaper</li>
+      <li><b>conditions</b>: when that benefit holds</li>
+      <li><b>signals</b>: the code evidence for it</li>
+    </ul>
+    <div>
       <span class="badge">abstraction</span><span class="badge">api-stability</span><span class="badge">automation</span><span class="badge">compliance-readiness</span>
       <span class="badge">configurability</span><span class="badge">modularity</span><span class="badge">observability</span><span class="badge">reusability</span>
     </div>
-    <p class="small c-text2 mt-1"><b>8 categories today</b>, one prompt each. <code>knowledge-preservation</code> (ADRs, rationale) is planned, to match the 9 in the APSEC draft [6] and TC-ADR [5].</p>
+    <p class="small c-text2 mt-1"><b>8 categories today</b>, one prompt each. A 9th, <code>knowledge-preservation</code>, is planned to match the APSEC draft [6].</p>
   </div>
-  <div class="panel purple">
-    <div class="head c-purple"><tabler-file-description class="icon" /> TC-ADR Manager [5]</div>
-    <p class="small">Extends <code>vscode-adr-manager</code>: MADR records gain <b>Benefit</b>, <b>Conditions</b>, <b>Signals</b>, Confidence, Status and Related Decisions. ADRs are the second-highest-rated TC scenario (4.13 / 5) [3].</p>
-    <p class="small mt-2 c-text2">We share Benefit and Conditions. Our <code>signals</code> are code evidence, theirs are signs of realisation. ADR linking is <b>read-only</b> today: we match an existing ADR, but never create one or link back. ADR creation, which the APSEC draft describes, is planned [6].</p>
+  <div class="panel dim">
+    <div class="head small c-purple"><tabler-file-description class="icon" /> Aside: TC-ADR Manager [5]</div>
+    <p class="small c-text2">A related extension that records credit in Architecture Decision Records (Benefit, Conditions, Signals, Status).</p>
+    <p class="small c-text2 mt-2">We <b>link</b> to an existing ADR (read-only); creating one from an annotation is planned [6].</p>
   </div>
 </div>
 
@@ -108,17 +104,25 @@ The research agenda [4] calls for <b>detecting</b> TC in existing code, using an
 
 # How a class is judged
 
-```mermaid
+```mermaid {scale: 0.8}
 flowchart LR
-  A["Right-click<br/>Analyse for TC"] --> B["tree-sitter<br/>class + imports + metrics"]
-  B --> C["8 parallel Claude calls<br/>one per category (9th planned)"]
-  C --> D["JSON verdicts<br/>is_tc_candidate, benefit, …"]
-  D --> E["Preview annotation<br/>Accept / Dismiss"]
+  A["① Right-click<br/>Analyse for TC"] --> B["② tree-sitter<br/>class + imports + metrics"]
+  B --> C["③ 8 parallel Claude calls<br/>one per category (9th planned)"]
+  C --> D["④ JSON verdicts<br/>is_tc_candidate, benefit, …"]
+  D --> E["⑤ Preview annotation<br/>Accept / Dismiss"]
 ```
 
-<div class="grid grid-cols-3 gap-4 mt-6">
+<div class="grid grid-cols-5 gap-3 mt-2 steps">
+  <p><b>①</b> The developer picks one class; nothing runs in the background.</p>
+  <p><b>②</b> Parse the file locally. Only that class, its imports and size metrics are sent.</p>
+  <p><b>③</b> One prompt per category, sent at once, so latency is that of the slowest call.</p>
+  <p><b>④</b> Each call answers yes / no, plus benefit, conditions and signals when yes.</p>
+  <p><b>⑤</b> Every "yes" becomes a preview above the class; nothing is written until accepted.</p>
+</div>
+
+<div class="grid grid-cols-3 gap-4 mt-4">
   <div class="panel dim"><div class="head"><tabler-cpu class="icon c-blue" /> Model</div><p class="small"><code>claude-sonnet-4-6</code>, temperature 0 by default</p></div>
-  <div class="panel dim"><div class="head"><tabler-link class="icon c-purple" /> ADR linking</div><p class="small">Read-only: Markdown ADRs under <code>docs/</code> are matched and cited as <code>adr = "ADR-0001"</code>. Planned: create a TC-ADR from an annotation, with a two-way link [6].</p></div>
+  <div class="panel dim"><div class="head"><tabler-link class="icon c-purple" /> ADR linking</div><p class="small">Read-only: a matching ADR under <code>docs/</code> is cited as <code>adr = "ADR-0001"</code></p></div>
   <div class="panel dim"><div class="head"><tabler-file-code class="icon c-green" /> Output</div><p class="small">Accepted annotations generate a <code>TechnicalCredit.java</code> annotation type</p></div>
 </div>
 
@@ -205,9 +209,9 @@ class: wide
 # Regression retest: everything passes
 
 <div class="grid grid-cols-3 gap-4 mt-4">
-  <div class="stat green"><div class="num">17 / 17</div><div class="lbl">original feature tests</div></div>
-  <div class="stat blue"><div class="num">6 / 6</div><div class="lbl">additional checks</div></div>
-  <div class="stat orange"><div class="num">3</div><div class="lbl">new bugs found, all fixed</div></div>
+  <div class="stat green"><div class="num">17 / 17</div><div class="lbl">original feature tests<br/><span class="c-muted">the manual VS Code scenarios from the baseline run (10 passed, 7 failed before the fixes), rerun unchanged</span></div></div>
+  <div class="stat blue"><div class="num">6 / 6</div><div class="lbl">additional checks<br/><span class="c-muted">new scenarios added for the retest, covering behaviour the original 17 did not exercise</span></div></div>
+  <div class="stat orange"><div class="num">3</div><div class="lbl">new bugs found, all fixed<br/><span class="c-muted">found while running the retest itself</span></div></div>
 </div>
 
 <div class="grid grid-cols-2 gap-5 mt-6">
@@ -227,6 +231,44 @@ class: wide
 </div>
 
 ---
+class: wide
+---
+
+# In VS Code: previews on a real interface
+
+<div class="grid grid-cols-5 gap-4 items-start">
+  <figure class="fig col-span-3">
+    <img src="/images/tc-regression-05-interface-preview.png" class="shot" style="max-height: 400px" />
+    <span class="src">Shapes.java: 2 previews above <code>interface Shape</code>, each with Accept / Dismiss</span>
+  </figure>
+  <div class="col-span-2 flex flex-col gap-4">
+    <figure class="fig">
+      <img src="/images/tc-regression-13-adr-link.png" class="shot" />
+      <span class="src">ADR linking: <code>adr = "ADR-0001"</code></span>
+    </figure>
+    <figure class="fig">
+      <img src="/images/tc-regression-15-no-api-key.png" class="shot" />
+      <span class="src">No key: an actionable message with a Set API Key button</span>
+    </figure>
+  </div>
+</div>
+
+---
+
+# In VS Code: records and real-world code
+
+<div class="grid grid-cols-2 gap-5 items-start">
+  <figure class="fig">
+    <img src="/images/tc-regression-04b-record.png" class="shot" style="max-height: 360px" />
+    <span class="src">The <code>Money</code> record gets 3 previews; records were rejected before Sprint 1</span>
+  </figure>
+  <figure class="fig">
+    <img src="/images/tc-real-vscode-weather-observer.png" class="shot" style="max-height: 360px" />
+    <span class="src">iluwatar Observer sample: <code>modularity</code> and <code>abstraction</code> credit on <code>Weather</code> (earlier build, before the syntax fix)</span>
+  </figure>
+</div>
+
+---
 layout: divider
 part: 3
 minutes: 4 min
@@ -235,6 +277,30 @@ minutes: 4 min
 # Pilot study design
 
 Twin items, three label dimensions, a runner and pre-registered hypotheses
+
+---
+
+# Four terms used in the pilot
+
+<div class="grid grid-cols-2 gap-4 mt-3">
+  <div class="panel orange">
+    <div class="head c-orange"><tabler-copy class="icon" /> Twin items</div>
+    <p class="small">The same design pattern written twice: a <b>credit twin</b>, where the pattern pays off, and a <b>no-credit twin</b>, a look-alike of similar size and shape where it does not. If the detector only spots the pattern, it fires on both.</p>
+  </div>
+  <div class="panel blue">
+    <div class="head c-blue"><tabler-tags class="icon" /> Three label dimensions</div>
+    <p class="small">Each item's correct answers, written down before any run, at three levels:</p>
+    <p class="small"><code>tc</code> is the whole class credit? · <code>categories</code> yes / no / unsure per category · <code>designPatterns</code> which GoF patterns it uses.</p>
+  </div>
+  <div class="panel purple">
+    <div class="head c-purple"><tabler-player-play class="icon" /> Runner</div>
+    <p class="small">A script that pushes every item through the <b>same code path as the extension</b>, repeats each analysis 5 times, and logs every call's verdict, tokens and latency. No VS Code, no clicking.</p>
+  </div>
+  <div class="panel green">
+    <div class="head c-green"><tabler-lock class="icon" /> Pre-registered hypotheses</div>
+    <p class="small">Pass / fail thresholds <b>committed to git before the first paid run</b> and evaluated by code. We can't move the goalposts after seeing the results.</p>
+  </div>
+</div>
 
 ---
 
@@ -315,16 +381,16 @@ minutes: 6 min
 
 # Results
 
-`claude-sonnet-4-6`, temperature 0, commit `5fedccc`, 240 calls, 0 errors
+`claude-sonnet-4-6`, temperature 0, commit `5fedccc`, 240 calls, 0 errors · then the same pilot on two DeepSeek models
 
 ---
 
 # Headline numbers
 
-<p class="small c-text2">Against the APSEC draft's research questions [6]: <b>RQ3</b> (consistency) gets a direct answer, <b>RQ2</b> (accuracy) its first quantitative evidence.</p>
+<p class="small c-text2">The APSEC draft [6] asks <b>RQ2</b>: <i>how accurate</i> is the detector? and <b>RQ3</b>: <i>how consistent</i> is it across repeated runs? RQ3 gets a direct answer, RQ2 its first numbers.</p>
 
 <div class="grid grid-cols-4 gap-3 mt-2">
-  <div class="stat green"><div class="num">2.1%</div><div class="lbl">flip rate · RQ3<br/><span class="c-muted">1 of 48 pairs · target &lt; 5%</span></div></div>
+  <div class="stat green"><div class="num">2.1%</div><div class="lbl">flip rate · RQ3<br/><span class="c-muted">pairs whose repeats disagree · 1 / 48 · target &lt; 5%</span></div></div>
   <div class="stat orange"><div class="num">4 / 6</div><div class="lbl">items classified right<br/><span class="c-muted">pattern oracle also 4 / 6</span></div></div>
   <div class="stat blue"><div class="num" style="font-size: 1.55rem; white-space: nowrap">7.6 / 9.1 s</div><div class="lbl">latency p50 / p95<br/><span class="c-muted">target p95 &lt; 10 s</span></div></div>
   <div class="stat purple"><div class="num">$0.055</div><div class="lbl">per analysis (8 calls)<br/><span class="c-muted">$1.66 for the whole run</span></div></div>
@@ -336,14 +402,18 @@ minutes: 6 min
     <Bar label="Detector" :value="26.7" color="var(--orange)" />
     <Bar label="Always yes" :value="19.6" color="var(--muted)" />
     <p class="small c-green mt-1">Beats always-yes</p>
+    <p class="def">F1 balances <b>precision</b> (are its "yes" answers right?) and <b>recall</b> (does it find the credit that is there?).</p>
   </div>
   <div class="panel dim">
     <div class="head small c-text2">Pooled pair-level accuracy · RQ2</div>
     <Bar label="Detector" :value="76.1" color="var(--orange)" />
     <Bar label="Always no" :value="89.1" color="var(--muted)" />
     <p class="small c-red mt-1">Loses to always-no, so H4 fails</p>
+    <p class="def">Share of pairs where the verdict matches the label. Most labels are "no", so answering "no" every time already scores 89%.</p>
   </div>
 </div>
+
+<p class="src"><b>Pooled pair-level:</b> one score over all 48 (class, category) pairs, each a majority vote over 5 repeats.</p>
 
 ---
 
@@ -422,42 +492,88 @@ When a call fires, the model often names a **different** category. `analyseForTC
 </div>
 
 ---
-class: wide
+
+# Does a different model help? Sonnet vs. DeepSeek
+
+<p class="small c-text2">Same items, prompts, repeats and scoring; only the model changes. Temperature 0, thinking off, 240 calls each, 0 errors.</p>
+
+<div class="legend"><span><i style="background: var(--orange)"></i>Sonnet 4.6</span><span><i style="background: var(--blue)"></i>DeepSeek Flash</span><span><i style="background: var(--purple)"></i>DeepSeek V4 Pro</span></div>
+
+<div class="grid grid-cols-3 gap-3 mt-2">
+  <ModelBars title="Cost per analysis (8 calls)" :max="0.06" note="Flash and Pro cost a fraction of Sonnet per analysis" :rows="[
+    { label: 'Sonnet', value: 0.0552, text: '$0.055', color: 'var(--orange)' },
+    { label: 'Flash', value: 0.0024, text: '$0.002', color: 'var(--blue)' },
+    { label: 'Pro', value: 0.0062, text: '$0.006', color: 'var(--purple)' } ]" />
+  <ModelBars title="Latency p95 per analysis" :max="10.5" :baseline="{ label: 'H6 target 10 s', value: 10 }" :rows="[
+    { label: 'Sonnet', value: 9.1, text: '9.1 s', color: 'var(--orange)' },
+    { label: 'Flash', value: 3.5, text: '3.5 s', color: 'var(--blue)' },
+    { label: 'Pro', value: 7.6, text: '7.6 s', color: 'var(--purple)' } ]" />
+  <ModelBars title="Flip rate · RQ3 (lower is better)" :max="5.5" :baseline="{ label: 'H1 target 5%', value: 5 }" :rows="[
+    { label: 'Sonnet', value: 2.1, text: '2.1%', color: 'var(--orange)' },
+    { label: 'Flash', value: 4.2, text: '4.2%', color: 'var(--blue)' },
+    { label: 'Pro', value: 0, text: '0%', color: 'var(--purple)' } ]" />
+  <ModelBars title="Pooled pair-level F1 · RQ2" :max="100" :baseline="{ label: 'always-yes 19.6%', value: 19.6 }" :rows="[
+    { label: 'Sonnet', value: 26.7, text: '26.7%', color: 'var(--orange)' },
+    { label: 'Flash', value: 47.1, text: '47.1%', color: 'var(--blue)' },
+    { label: 'Pro', value: 50.0, text: '50.0%', color: 'var(--purple)' } ]" />
+  <ModelBars title="Pooled pair-level accuracy · RQ2" :max="100" :baseline="{ label: 'always-no 89.1%', value: 89.1 }" :rows="[
+    { label: 'Sonnet', value: 76.1, text: '76.1%', color: 'var(--orange)' },
+    { label: 'Flash', value: 80.4, text: '80.4%', color: 'var(--blue)' },
+    { label: 'Pro', value: 82.6, text: '82.6%', color: 'var(--purple)' } ]" />
+  <ModelBars title="Category drift (names another category)" :max="100" :rows="[
+    { label: 'Sonnet', value: 62.3, text: '62.3%', color: 'var(--orange)' },
+    { label: 'Flash', value: 47.9, text: '47.9%', color: 'var(--blue)' },
+    { label: 'Pro', value: 15.4, text: '15.4%', color: 'var(--purple)' } ]" />
+</div>
+
+<div class="key mt-2">Both DeepSeek models are <b>faster and cheaper</b>, and find more of the labelled credit (recall 40% → 80%). But <b>none beats always-no on accuracy</b>, and all three tie the pattern oracle at 4 / 6.</div>
+
+<p class="src">Only 5 "yes" pairs, so F1 gains are indicative. Source: study/runs/2026-11-18-deepseek-*/comparison.md</p>
+
 ---
 
-# In VS Code: previews on a real interface
+# Where the models disagree
 
-<div class="grid grid-cols-5 gap-4 items-start">
-  <figure class="fig col-span-3">
-    <img src="/images/tc-regression-05-interface-preview.png" class="shot" style="max-height: 400px" />
-    <span class="src">Shapes.java: 2 previews above <code>interface Shape</code>, each with Accept / Dismiss</span>
-  </figure>
-  <div class="col-span-2 flex flex-col gap-4">
-    <figure class="fig">
-      <img src="/images/tc-regression-13-adr-link.png" class="shot" />
-      <span class="src">ADR linking: <code>adr = "ADR-0001"</code></span>
-    </figure>
-    <figure class="fig">
-      <img src="/images/tc-regression-15-no-api-key.png" class="shot" />
-      <span class="src">No key: an actionable message with a Set API Key button</span>
-    </figure>
+<div class="grid grid-cols-5 gap-5 mt-1 items-start">
+  <div class="col-span-3">
+    <table class="vote">
+      <thead><tr><th>Item</th><th>Category</th><th>Label</th><th>Sonnet</th><th>Flash</th><th>Pro</th></tr></thead>
+      <tbody>
+        <tr class="grp"><td>strategy-credit</td><td rowspan="4"><code>abstraction</code></td><td class="lb">yes</td><td class="bad">no</td><td class="ok">TC</td><td class="ok">TC</td></tr>
+        <tr><td>observer-credit</td><td class="lb">yes</td><td class="bad">no</td><td class="ok">TC</td><td class="ok">TC</td></tr>
+        <tr><td>observer-no-credit</td><td class="lb">no</td><td class="ok">no</td><td class="bad">TC</td><td class="bad">TC</td></tr>
+        <tr><td>strategy-no-credit</td><td class="lb">no</td><td class="ok">no</td><td class="ok">no</td><td class="bad">TC</td></tr>
+        <tr class="grp"><td>adapter-credit</td><td rowspan="3"><code>api-stability</code></td><td class="lb">no</td><td class="bad">TC</td><td class="ok">no</td><td class="ok">no</td></tr>
+        <tr><td>observer-credit</td><td class="lb">no</td><td class="bad">TC</td><td class="ok">no</td><td class="ok">no</td></tr>
+        <tr><td>observer-no-credit</td><td class="lb">no</td><td class="bad">TC</td><td class="bad">TC</td><td class="ok">no</td></tr>
+        <tr class="grp"><td>adapter-credit</td><td rowspan="2"><code>modularity</code></td><td class="lb">unsure</td><td class="uns">no</td><td class="uns">TC</td><td class="uns">TC</td></tr>
+        <tr><td>observer-no-credit</td><td class="lb">no</td><td class="ok">no</td><td class="ok">no</td><td class="bad">TC</td></tr>
+        <tr class="grp"><td>observer-credit</td><td rowspan="2"><code>reusability</code></td><td class="lb">no</td><td class="ok">no</td><td class="bad">TC</td><td class="ok">no</td></tr>
+        <tr><td>strategy-credit</td><td class="lb">no</td><td class="bad">TC</td><td class="bad">TC</td><td class="ok">no</td></tr>
+      </tbody>
+    </table>
+    <p class="src">Every (item, category) pair where any model's majority verdict differs from Sonnet's. <span class="c-green">green</span> = matches the label, <span class="c-red">red</span> = wrong, grey = unsure (not scored).</p>
+  </div>
+  <div class="col-span-2 flex flex-col gap-3">
+    <ModelBars title="Same verdict as Sonnet (48 pairs)" :max="100" :rows="[
+      { label: 'Flash', value: 85.4, text: '41 / 48', color: 'var(--blue)' },
+      { label: 'Pro', value: 79.2, text: '38 / 48', color: 'var(--purple)' } ]" />
+    <div class="panel dim">
+      <div class="head small c-text2">Hypotheses per model</div>
+      <table class="hypgrid">
+        <thead><tr><th></th><th>H1</th><th>H2</th><th>H3</th><th>H4</th><th>H5</th><th>H6</th></tr></thead>
+        <tbody>
+          <tr><td class="c-orange">Sonnet</td><td class="p">✓</td><td class="p">✓</td><td class="p">✓</td><td class="f">✗</td><td class="f">✗</td><td class="p">✓</td></tr>
+          <tr><td class="c-blue">Flash</td><td class="p">✓</td><td class="p">✓</td><td class="p">✓</td><td class="f">✗</td><td class="f">✗</td><td class="p">✓</td></tr>
+          <tr><td class="c-purple">Pro</td><td class="p">✓</td><td class="p">✓</td><td class="f">✗</td><td class="f">✗</td><td class="f">✗</td><td class="p">✓</td></tr>
+        </tbody>
+      </table>
+      <p class="def">Pro fails H3: it tells only 1 of 3 twins apart.</p>
+    </div>
   </div>
 </div>
 
----
-
-# In VS Code: records and real-world code
-
-<div class="grid grid-cols-2 gap-5 items-start">
-  <figure class="fig">
-    <img src="/images/tc-regression-04b-record.png" class="shot" style="max-height: 360px" />
-    <span class="src">The <code>Money</code> record gets 3 previews; records were rejected before Sprint 1</span>
-  </figure>
-  <figure class="fig">
-    <img src="/images/tc-real-vscode-weather-observer.png" class="shot" style="max-height: 360px" />
-    <span class="src">iluwatar Observer sample: <code>modularity</code> and <code>abstraction</code> credit on <code>Weather</code> (earlier build, before the syntax fix)</span>
-  </figure>
-</div>
+<div class="key mt-1">7 of 11 disagreements are in <code>abstraction</code> and <code>api-stability</code>. DeepSeek fires on abstraction where Sonnet never does, catching credit <i>and</i> look-alikes. <b>A new model doesn't fix look-alikes; a payoff test in the prompts might.</b></div>
 
 ---
 layout: divider
@@ -521,7 +637,7 @@ What the numbers can't tell us yet, and what we do next
   </div>
 </div>
 
-<p class="src">Pilot spend so far: $3.40 of an $11 budget (smoke test + two full runs).</p>
+<p class="src">Pilot spend so far: $3.40 of an $11 budget (smoke test + two full runs), plus $0.26 for the two DeepSeek runs.</p>
 
 ---
 

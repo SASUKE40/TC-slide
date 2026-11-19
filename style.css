@@ -479,3 +479,78 @@ img.shot {
 .next.grid-cols-4 .panel .head {
   font-size: 0.86rem;
 }
+
+/* Inline definitions under a chart or panel */
+.def {
+  font-size: 0.7rem;
+  line-height: 1.4;
+  color: var(--muted);
+  margin-top: 0.35rem !important;
+}
+
+/* Step annotations under the pipeline diagram */
+.steps p {
+  font-size: 0.74rem;
+  line-height: 1.4;
+  color: var(--text-2);
+  border-top: 2px solid var(--divider);
+  padding-top: 0.35rem;
+  margin: 0;
+}
+.steps b {
+  color: var(--orange);
+}
+
+/* Model colour key */
+.legend {
+  display: flex;
+  gap: 1.2rem;
+  margin-top: -0.2rem;
+  font-size: 0.74rem;
+  color: var(--text-2);
+}
+.legend i {
+  display: inline-block;
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 2px;
+  margin-right: 0.3rem;
+  vertical-align: -0.05rem;
+}
+
+/* Verdict matrix for the model comparison */
+.slidev-layout table.vote {
+  font-size: 0.7rem;
+}
+.slidev-layout table.vote td,
+.slidev-layout table.vote th {
+  padding: 0.16rem 0.4rem;
+}
+.slidev-layout table.vote td.lb,
+.slidev-layout table.vote td.ok,
+.slidev-layout table.vote td.bad,
+.slidev-layout table.vote td.uns,
+.slidev-layout table.vote th:nth-child(n + 3) {
+  text-align: center;
+}
+.slidev-layout table.vote tr.grp td {
+  border-top: 1.25px solid var(--line);
+}
+.vote td[rowspan] {
+  vertical-align: middle;
+}
+.vote td.ok { color: var(--green); background: var(--green-fill); font-family: var(--mono); }
+.vote td.bad { color: var(--red); background: #2a0806; font-family: var(--mono); }
+.vote td.uns { color: var(--muted); font-family: var(--mono); }
+
+.slidev-layout table.hypgrid {
+  font-size: 0.74rem;
+}
+.slidev-layout table.hypgrid td,
+.slidev-layout table.hypgrid th {
+  padding: 0.12rem 0.3rem;
+  text-align: center;
+}
+.hypgrid td:first-child { text-align: left; font-weight: 600; }
+.hypgrid td.p { color: var(--green); }
+.hypgrid td.f { color: var(--red); background: #2a0806; }
